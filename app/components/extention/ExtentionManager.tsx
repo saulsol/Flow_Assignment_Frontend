@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import FixedExtensionList from "./FixedExtentionList";
 import CustomExtensionManager from "./CustomExtentionManager";
+import FileUploadSection from "./FileUploadSection";
+
 export interface FixedExtension {
     name: string;
     checked: boolean;
@@ -26,6 +28,8 @@ export default function ExtentionManager() {
             <hr />
             <FixedExtensionList fixedExtensions={fixedExtensions} setFixedExtensions={setFixedExtensions} />
             <CustomExtensionManager />
+            <hr />
+            <FileUploadSection />
         </div>
     );
 }
