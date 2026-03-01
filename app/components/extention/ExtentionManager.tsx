@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 import FixedExtensionList from "./FixedExtentionList";
-
+import CustomExtensionManager from "./CustomExtentionManager";
 export interface FixedExtension {
     name: string;
     checked: boolean;
@@ -17,7 +17,7 @@ export default function ExtentionManager() {
         { name: "exe", checked: false },
         { name: "scr", checked: false },
         { name: "js", checked: false },
-      ]);
+      ]);  
 
     return (
         <div>
@@ -25,6 +25,7 @@ export default function ExtentionManager() {
             <div>파일 확장자를 차단하여 업로드를 제한합니다.</div>
             <hr />
             <FixedExtensionList fixedExtensions={fixedExtensions} setFixedExtensions={setFixedExtensions} />
+            <CustomExtensionManager />
         </div>
     );
 }
