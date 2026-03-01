@@ -13,7 +13,7 @@ export default function CustomExtensionManager() {
   const [extensions, setExtensions] = useState<CustomExtension[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 최초 전체 조회
+  // 최초 전체 조회
   useEffect(() => {
     const fetchExtensions = async () => {
       try {
