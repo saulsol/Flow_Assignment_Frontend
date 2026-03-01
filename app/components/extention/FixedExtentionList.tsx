@@ -1,4 +1,7 @@
+import { apiClient } from "@/app/api/apiClient";
+
 interface FixedExtension {
+    id: number;
     name: string;
     checked: boolean;
   }
@@ -15,15 +18,34 @@ interface FixedExtension {
     setFixedExtensions,
   }: Props) {
   
-    const toggleExtension = (name: string) => {
-      setFixedExtensions((prev) =>
-        prev.map((ext) =>
-          ext.name === name
-            ? { ...ext, checked: !ext.checked }
-            : ext
-        )
-      );
-    };
+    const toggleExtension = async (id: number) => {
+        const target = fixedExtensions.find((ext) => ext.id === id);
+        if (!target) return;
+      
+        const updatedChecked = !target.checked;
+      
+        // UI 먼저 업데이트 (낙관적 업데이트)
+        setFixedExtensions((prev) =>
+          prev.map((ext) =>
+            ext.id === id ? { ...ext, checked: updatedChecked } : ext
+          )
+        );
+      
+        try {
+          await apiClient(`/fixedExtensions/fixed`, {
+            method: "PATCH",
+            body: JSON.stringify({ id: id, checked: updatedChecked}),
+          });
+        } catch (error) {
+          console.error("업데이트 실패", error);
+      
+          setFixedExtensions((prev) =>
+            prev.map((ext) =>
+              ext.id === id ? { ...ext, checked: target.checked } : ext
+            )
+          );
+        }
+      };
   
     const reset = () => {
       setFixedExtensions((prev) =>
@@ -40,11 +62,11 @@ interface FixedExtension {
   
         <div>
           {fixedExtensions?.map((ext) => (
-            <label key={ext.name} style={{ marginRight: "15px" }}>
+            <label key={ext.id} style={{ marginRight: "15px" }}>
               <input
                 type="checkbox"
                 checked={ext.checked}
-                onChange={() => toggleExtension(ext.name)}
+                onChange={() => toggleExtension(ext.id)}
               />
               {ext.name}
             </label>

@@ -46,7 +46,10 @@ export default function FileUploadSection() {
     setUploadedFiles((prev) => [...prev, ...newUploaded]);
     setSelectedFiles([]);
   };
-// 파일 삭제
+
+  /* =========================
+     파일 삭제
+  ========================== */
   const removeUploadedFile = (name: string) => {
     setUploadedFiles((prev) => prev.filter((f) => f.name !== name));
   };

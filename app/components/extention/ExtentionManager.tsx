@@ -1,25 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import FixedExtensionList from "./FixedExtentionList";
 import CustomExtensionManager from "./CustomExtentionManager";
 import FileUploadSection from "./FileUploadSection";
+import { apiClient } from "@/app/api/apiClient";
 
 export interface FixedExtension {
+    id: number;
     name: string;
     checked: boolean;
 }
 
 export default function ExtentionManager() {
-    const [fixedExtensions, setFixedExtensions] = useState<FixedExtension[]>([
-        { name: "bat", checked: false },
-        { name: "cmd", checked: false },
-        { name: "com", checked: false },
-        { name: "cpl", checked: false },
-        { name: "exe", checked: false },
-        { name: "scr", checked: false },
-        { name: "js", checked: false },
-      ]);  
+    const [fixedExtensions, setFixedExtensions] = useState<FixedExtension[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const load = async () => {
+          try {
+            const data = await apiClient<FixedExtension[]>(
+              "/fixedExtensions"
+            );
+            setFixedExtensions(data);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        load();
+      }, []);
+    
+    if (loading) return <div>로딩중...</div>;
 
     return (
         <div>
