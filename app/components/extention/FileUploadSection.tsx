@@ -1,11 +1,17 @@
 "use client";
 
+import { apiClient } from "@/app/api/apiClient";
 import { useState, DragEvent, ChangeEvent } from "react";
 
 interface UploadedFile {
   name: string;
   size: number;
   date: string;
+}
+
+interface FileValidationResponse {
+  fileName: string;
+  parsable: boolean;
 }
 
 export default function FileUploadSection() {
@@ -15,18 +21,70 @@ export default function FileUploadSection() {
   /* =========================
      파일 선택
   ========================== */
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setSelectedFiles(Array.from(e.target.files));
+  
+    const file = e.target.files[0]; // 단일 파일 기준
+    const fileName = file.name;
+  
+    try {
+      const result = await apiClient<FileValidationResponse>(
+        "/files/check",
+        {
+          method: "POST",
+          body: JSON.stringify({ fileName }),
+        }
+      );
+  
+      if (!result.parsable) {
+        alert(`차단된 확장자입니다: ${result.fileName}`);
+        return;
+      }
+  
+      // 통과 시에만 저장
+      setSelectedFiles([file]);
+    } catch (error) {
+      console.error("확장자 검사 실패", error);
+    }
   };
 
   /* =========================
      드래그앤드롭
   ========================== */
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-    setSelectedFiles(files);
+  
+    const droppedFiles = Array.from(e.dataTransfer.files);
+  
+    const validFiles: File[] = [];
+  
+    for (const file of droppedFiles) {
+      const formData = new FormData();
+      formData.append("multipartFile", file);
+      formData.append("fileName", file.name);
+  
+      try {
+        const result = await apiClient<FileValidationResponse>(
+          "/files/check",
+          {
+            method: "POST",
+            body: JSON.stringify({ fileName: file.name }),
+          }
+        );
+    
+        if (!result.parsable) {
+          alert(`차단된 확장자입니다: ${result.fileName}`);
+          return;
+        }
+    
+        // 통과 시에만 저장
+        setSelectedFiles([file]);
+      } catch (error) {
+        console.error("확장자 검사 실패", error);
+      }
+    }
+  
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -36,15 +94,30 @@ export default function FileUploadSection() {
   /* =========================
      업로드 버튼
   ========================== */
-  const handleUpload = () => {
-    const newUploaded = selectedFiles.map((file) => ({
-      name: file.name,
-      size: file.size,
-      date: new Date().toISOString().split("T")[0],
-    }));
-
-    setUploadedFiles((prev) => [...prev, ...newUploaded]);
-    setSelectedFiles([]);
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) return;
+  
+    try {
+      for (const file of selectedFiles) {
+        const formData = new FormData();
+  
+        formData.append("fileName", file.name);
+        formData.append("multipartFile", file);
+  
+        await apiClient<void>("/files/save", {
+          method: "POST",
+          body: formData,
+          headers: {}, 
+        });
+      }
+  
+      alert("업로드 성공");
+  
+      setSelectedFiles([]);
+    } catch (error) {
+      console.error("업로드 실패", error);
+      alert("업로드 중 오류 발생");
+    }
   };
 
   /* =========================
@@ -119,7 +192,7 @@ export default function FileUploadSection() {
 
       {/* 업로드 완료 목록 */}
       <div style={{ marginTop: "40px" }}>
-        <h3>업로드 된 파일</h3>
+      {/* <h3>업로드 된 파일</h3> */}
 
         {uploadedFiles.map((file) => (
           <div

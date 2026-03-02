@@ -16,11 +16,15 @@ export async function apiClient<T>(
     url += `?${query}`;
   }
 
+  const isFormData = options.body instanceof FormData;
+
   const res = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
+    headers: isFormData
+      ? options.headers
+      : {
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
     ...options,
   });
 
