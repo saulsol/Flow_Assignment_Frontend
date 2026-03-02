@@ -17,6 +17,54 @@ interface FixedExtension {
     fixedExtensions,
     setFixedExtensions,
   }: Props) {
+    const titleStyle: React.CSSProperties = {
+      display: "inline-block",
+      fontSize: "18px",
+      fontWeight: 700,
+      color: "#4a2f43",
+      backgroundColor: "#ffeaf4",
+      border: "1px solid #f4cfe0",
+      borderRadius: "10px",
+      padding: "6px 12px",
+      marginBottom: "10px",
+    };
+    const listContainerStyle: React.CSSProperties = {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "10px",
+      padding: "12px",
+      backgroundColor: "#fff6fa",
+      border: "1px solid #f6dce8",
+      borderRadius: "12px",
+      marginBottom: "16px",
+    };
+    const chipStyle: React.CSSProperties = {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "8px",
+      padding: "8px 12px",
+      borderRadius: "999px",
+      border: "1px solid #ebc7da",
+      backgroundColor: "#ffffff",
+      color: "#4a3a45",
+      fontSize: "14px",
+      lineHeight: 1,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+    };
+    const checkboxStyle: React.CSSProperties = {
+      width: "15px",
+      height: "15px",
+      margin: 0,
+      display: "block",
+      flexShrink: 0,
+      accentColor: "#d46aa1",
+      cursor: "pointer",
+    };
+    const labelTextStyle: React.CSSProperties = {
+      lineHeight: 1,
+      display: "inline-block",
+    };
   
     const toggleExtension = async (id: number) => {
         const target = fixedExtensions.find((ext) => ext.id === id);
@@ -51,19 +99,20 @@ interface FixedExtension {
   
     return (
       <div>
-        <div className="sub-title">
+        <div style={titleStyle}>
           고정 확장자
         </div>
   
-        <div>
+        <div style={listContainerStyle}>
           {fixedExtensions?.map((ext) => (
-            <label key={ext.id} style={{ marginRight: "15px" }}>
+            <label key={ext.id} style={chipStyle}>
               <input
                 type="checkbox"
                 checked={ext.checked}
                 onChange={() => toggleExtension(ext.id)}
+                style={checkboxStyle}
               />
-              {ext.name}
+              <span style={labelTextStyle}>{ext.name}</span>
             </label>
           ))}
         </div>

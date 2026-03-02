@@ -15,6 +15,17 @@ export interface FixedExtension {
 export default function ExtentionManager() {
     const [fixedExtensions, setFixedExtensions] = useState<FixedExtension[]>([]);
     const [loading, setLoading] = useState(true);
+    const headerTitleStyle: React.CSSProperties = {
+        fontSize: "24px",
+        fontWeight: 700,
+        color: "#3f2a3c",
+        marginBottom: "8px",
+    };
+    const headerDescriptionStyle: React.CSSProperties = {
+        fontSize: "14px",
+        color: "#6b5b68",
+        marginBottom: "20px",
+    };
 
     useEffect(() => {
         const load = async () => {
@@ -37,11 +48,11 @@ export default function ExtentionManager() {
 
     return (
         <div>
-            <div>파일 확장자 차단</div>
-            <div>파일 확장자를 차단하여 업로드를 제한합니다.</div>
+            <div style={headerTitleStyle}>파일 확장자 차단</div>
+            <div style={headerDescriptionStyle}>파일 확장자를 차단하여 업로드를 제한합니다.</div>
             <hr />
             <FixedExtensionList fixedExtensions={fixedExtensions} setFixedExtensions={setFixedExtensions} />
-            <CustomExtensionManager />
+            <CustomExtensionManager fixedExtensions={fixedExtensions} />
             <hr />
             <FileUploadSection />
         </div>

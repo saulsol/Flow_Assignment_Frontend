@@ -130,44 +130,128 @@ export default function FileUploadSection() {
   const formatSize = (size: number) => {
     return (size / 1024 / 1024).toFixed(1) + " mb";
   };
+  const titleStyle: React.CSSProperties = {
+    display: "inline-block",
+    fontSize: "18px",
+    fontWeight: 700,
+    color: "#4a2f43",
+    backgroundColor: "#ffeaf4",
+    border: "1px solid #f4cfe0",
+    borderRadius: "10px",
+    padding: "6px 12px",
+    marginBottom: "12px",
+  };
+  const dropZoneStyle: React.CSSProperties = {
+    border: "2px dashed #e7b8d1",
+    borderRadius: "12px",
+    padding: "70px 20px",
+    textAlign: "center",
+    marginBottom: "14px",
+    backgroundColor: "#fff6fa",
+    color: "#6d4860",
+    fontWeight: 600,
+  };
+  const selectedFilesWrapStyle: React.CSSProperties = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px",
+    marginBottom: "14px",
+  };
+  const selectedFileChipStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    height: "32px",
+    padding: "0 12px",
+    borderRadius: "999px",
+    border: "1px solid #ebc7da",
+    backgroundColor: "#ffeaf4",
+    color: "#5a3550",
+    fontSize: "14px",
+    lineHeight: 1,
+  };
+  const actionRowStyle: React.CSSProperties = {
+    display: "flex",
+    gap: "10px",
+    marginBottom: "10px",
+  };
+  const actionButtonStyle: React.CSSProperties = {
+    height: "40px",
+    minWidth: "110px",
+    padding: "0 16px",
+    borderRadius: "10px",
+    border: "1px solid #b93679",
+    backgroundColor: "#cc3f86",
+    color: "#fff",
+    fontWeight: 700,
+    fontSize: "14px",
+    lineHeight: 1,
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+  const uploadedListWrapStyle: React.CSSProperties = {
+    marginTop: "26px",
+    display: "grid",
+    gap: "10px",
+  };
+  const uploadedCardStyle: React.CSSProperties = {
+    border: "1px solid #f1d2e2",
+    backgroundColor: "#fff6fa",
+    padding: "14px",
+    borderRadius: "12px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  };
+  const fileNameStyle: React.CSSProperties = {
+    color: "#4a2f43",
+    fontWeight: 600,
+  };
+  const fileMetaStyle: React.CSSProperties = {
+    fontSize: "12px",
+    color: "#846479",
+    marginTop: "4px",
+  };
+  const removeButtonStyle: React.CSSProperties = {
+    height: "32px",
+    padding: "0 12px",
+    borderRadius: "999px",
+    border: "1px solid #e8b8d1",
+    backgroundColor: "#fff",
+    color: "#8d5a77",
+    fontWeight: 700,
+    cursor: "pointer",
+  };
 
   return (
     <div className="main-container">
-      <h2>파일 업로드</h2>
+      <div style={titleStyle}>파일 업로드</div>
 
       {/* 드롭 영역 */}
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        style={{
-          border: "2px dashed #ccc",
-          borderRadius: "10px",
-          padding: "80px 20px",
-          textAlign: "center",
-          marginBottom: "20px",
-        }}
+        style={dropZoneStyle}
       >
         첨부할 파일을 여기에 끌어다 놓으세요
       </div>
 
       {/* 선택된 파일 리스트 */}
       {selectedFiles.length > 0 && (
-        <div style={{ marginBottom: "15px" }}>
+        <div style={selectedFilesWrapStyle}>
           {selectedFiles.map((file) => (
-            <div key={file.name}>{file.name}</div>
+            <div key={file.name} style={selectedFileChipStyle}>
+              {file.name}
+            </div>
           ))}
         </div>
       )}
 
       {/* 버튼 영역 */}
-      <div style={{ display: "flex", gap: "20px" }}>
+      <div style={actionRowStyle}>
         <label
-          style={{
-            padding: "12px 20px",
-            border: "1px solid purple",
-            borderRadius: "8px",
-            cursor: "pointer",
-          }}
+          style={actionButtonStyle}
         >
           파일 선택
           <input
@@ -180,40 +264,32 @@ export default function FileUploadSection() {
 
         <button
           onClick={handleUpload}
-          style={{
-            padding: "12px 20px",
-            border: "1px solid purple",
-            borderRadius: "8px",
-          }}
+          style={actionButtonStyle}
         >
           업로드
         </button>
       </div>
 
       {/* 업로드 완료 목록 */}
-      <div style={{ marginTop: "40px" }}>
+      <div style={uploadedListWrapStyle}>
       {/* <h3>업로드 된 파일</h3> */}
 
         {uploadedFiles.map((file) => (
           <div
             key={file.name}
-            style={{
-              border: "1px solid #ddd",
-              padding: "15px",
-              borderRadius: "10px",
-              marginBottom: "10px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
+            style={uploadedCardStyle}
           >
             <div>
-              <div>{file.name}</div>
-              <div style={{ fontSize: "12px", color: "#666" }}>
+              <div style={fileNameStyle}>{file.name}</div>
+              <div style={fileMetaStyle}>
                 {formatSize(file.size)} | {file.date}
               </div>
             </div>
 
-            <button onClick={() => removeUploadedFile(file.name)}>
+            <button
+              onClick={() => removeUploadedFile(file.name)}
+              style={removeButtonStyle}
+            >
               삭제
             </button>
           </div>
